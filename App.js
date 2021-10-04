@@ -3,9 +3,10 @@ import React, { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-community/async-storage";
 import { StyleSheet, Text, View } from "react-native";
 import Register from "./src/screens/Register";
+import Login from "./src/screens/Login";
 
 function App() {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState("");
 
   useEffect(() => {
     checkUser();
@@ -14,19 +15,22 @@ function App() {
   const checkUser = async () => {
     const user = await AsyncStorage.getItem("user");
     if (user) {
-      setUser(JSON.parse(user));
+      setUser(user);
     }
   };
 
   return (
     <View style={styles.container}>
-      {user ? (
+      {user.length ? (
         <View>
-          <Text>Open up App.js to start working on your app!</Text>
+          <Text onPress={() => setUser("")}>
+            Open up App.js to start working on your app!
+          </Text>
           <StatusBar style="auto" />
         </View>
       ) : (
-        <Register />
+        // <Register />
+        <Login setUser={setUser} />
       )}
     </View>
   );

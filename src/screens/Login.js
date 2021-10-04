@@ -1,49 +1,50 @@
-import { View, StyleSheet } from "react-native";
-import { Button, Title, TextInput } from "react-native-paper";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import firebase from "../storage/firebase";
-import { bgColor, cherryRed } from "../default/colors";
 import Alert from "../components/Alert";
+import { View, StyleSheet, Text } from "react-native";
+import { TextInput, Button, Title } from "react-native-paper";
+import { bgColor, cherryRed } from "../default/colors";
+import AsyncStorage from "@react-native-community/async-storage";
 
-const Register = () => {
+const Login = ({ setUser }) => {
   const initalState = {
     name: "",
     pwd: "",
   };
 
   const [form, setForm] = useState(initalState);
-  const [cpass, setCpass] = useState("");
   const [alert, setAlert] = useState("");
-
-  useEffect(() => {
-    return <Alert alert={alert} setAlert={setAlert} />;
-  }, [alert]);
 
   const handleClick = () => {
     if (form.name === "" || form.pwd === "" || cpass === "")
       setAlert("Encountered null values");
-    else {
-      if (form.pwd !== cpass) setAlert("Password mismatch!");
-      else {
-        const db = firebase.database().ref("users");
-        db.push({
-          name: form.name,
-          password: form.pwd,
-        });
-        setForm(initalState);
-        setCpass("");
-        setAlert("User registered!");
+
+    const db = firebase.database();
+    const ref = db.ref("users");
+
+    ref.once("value", (snapshot) => {
+      let data = snapshot.val();
+      for (let i in data) {
+        if (data[i].name === form.name && data[i].password === form.pwd) {
+          storeUser();
+          setUser(form.name);
+
+          console.log("Logged in");
+          break;
+        }
       }
-    }
+    });
   };
 
-  // if (alert !== "") {
-  //   return <Alert alert={alert} setAlert={setAlert} />;
-  // }
+  const storeUser = async () => {
+    await AsyncStorage.setItem("user", form.name);
+  };
 
+  //   if (alert !== "") {
+  //     return <Alert alert={alert} setAlert={setAlert} />;
+  //   }
   return (
     <View style={styles.container}>
-      {alert && <Alert alert={alert} setAlert={setAlert} />}
       <Title
         style={{
           textTransform: "capitalize",
@@ -54,18 +55,17 @@ const Register = () => {
         Tell us more about you
       </Title>
       <TextInput
-        // label="User Name"
-        value={form.name}
         placeholder="User Name"
+        value={form.name}
         mode="outlined"
         outlineColor={cherryRed}
         right={<TextInput.Icon name="account" />}
         onChangeText={(text) => setForm({ ...form, name: text })}
+        style={{ marginBottom: 2 }}
       />
       <TextInput
-        // label="Password"
-        value={form.pwd}
         placeholder="Password"
+        value={form.pwd}
         secureTextEntry
         mode="outlined"
         outlineColor={cherryRed}
@@ -73,20 +73,8 @@ const Register = () => {
         onChangeText={(pass) => setForm({ ...form, pwd: pass })}
       />
 
-      <TextInput
-        // label="Confirm Password"
-        value={cpass}
-        placeholder="Confirm Password"
-        secureTextEntry
-        outlineColor={cherryRed}
-        selectionColor={cherryRed}
-        mode="outlined"
-        right={<TextInput.Icon name="lock-check" />}
-        onChangeText={(pass) => setCpass(pass)}
-      />
-
       <Button
-        icon="account-plus"
+        icon="import"
         mode="contained"
         dark="true"
         style={{
@@ -98,8 +86,10 @@ const Register = () => {
         }}
         onPress={handleClick}
       >
-        Create an account
+        Log me in..
       </Button>
+
+      <Text style={{ color: "red" }}>No account? Create one</Text>
     </View>
   );
 };
@@ -114,4 +104,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Register;
+export default Login;
