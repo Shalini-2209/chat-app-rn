@@ -1,11 +1,11 @@
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Text } from "react-native";
 import { Button, Title, TextInput } from "react-native-paper";
 import React, { useEffect, useState } from "react";
 import firebase from "../storage/firebase";
 import { bgColor, cherryRed } from "../default/colors";
 import Alert from "../components/Alert";
 
-const Register = () => {
+const Register = ({ navigation }) => {
   const initalState = {
     name: "",
     pwd: "",
@@ -16,7 +16,7 @@ const Register = () => {
   const [alert, setAlert] = useState("");
 
   useEffect(() => {
-    return <Alert alert={alert} setAlert={setAlert} />;
+    <Alert alert={alert} setAlert={setAlert} />;
   }, [alert]);
 
   const handleClick = () => {
@@ -37,69 +37,76 @@ const Register = () => {
     }
   };
 
-  // if (alert !== "") {
-  //   return <Alert alert={alert} setAlert={setAlert} />;
-  // }
-
   return (
     <View style={styles.container}>
-      {alert && <Alert alert={alert} setAlert={setAlert} />}
-      <Title
-        style={{
-          textTransform: "capitalize",
-          marginBottom: 60,
-          fontWeight: "bold",
-        }}
-      >
-        Tell us more about you
-      </Title>
-      <TextInput
-        // label="User Name"
-        value={form.name}
-        placeholder="User Name"
-        mode="outlined"
-        outlineColor={cherryRed}
-        right={<TextInput.Icon name="account" />}
-        onChangeText={(text) => setForm({ ...form, name: text })}
-      />
-      <TextInput
-        // label="Password"
-        value={form.pwd}
-        placeholder="Password"
-        secureTextEntry
-        mode="outlined"
-        outlineColor={cherryRed}
-        right={<TextInput.Icon name="lock" />}
-        onChangeText={(pass) => setForm({ ...form, pwd: pass })}
-      />
+      {alert ? (
+        <Alert alert={alert} setAlert={setAlert} />
+      ) : (
+        <>
+          <Title
+            style={{
+              textTransform: "capitalize",
+              marginBottom: 60,
+              fontWeight: "bold",
+            }}
+          >
+            Tell us more about you
+          </Title>
+          <TextInput
+            // label="User Name"
+            value={form.name}
+            placeholder="User Name"
+            mode="outlined"
+            outlineColor={cherryRed}
+            right={<TextInput.Icon name="account" />}
+            onChangeText={(text) => setForm({ ...form, name: text })}
+          />
+          <TextInput
+            // label="Password"
+            value={form.pwd}
+            placeholder="Password"
+            secureTextEntry
+            mode="outlined"
+            outlineColor={cherryRed}
+            right={<TextInput.Icon name="lock" />}
+            onChangeText={(pass) => setForm({ ...form, pwd: pass })}
+          />
 
-      <TextInput
-        // label="Confirm Password"
-        value={cpass}
-        placeholder="Confirm Password"
-        secureTextEntry
-        outlineColor={cherryRed}
-        selectionColor={cherryRed}
-        mode="outlined"
-        right={<TextInput.Icon name="lock-check" />}
-        onChangeText={(pass) => setCpass(pass)}
-      />
+          <TextInput
+            // label="Confirm Password"
+            value={cpass}
+            placeholder="Confirm Password"
+            secureTextEntry
+            outlineColor={cherryRed}
+            selectionColor={cherryRed}
+            mode="outlined"
+            right={<TextInput.Icon name="lock-check" />}
+            onChangeText={(pass) => setCpass(pass)}
+          />
 
-      <Button
-        icon="account-plus"
-        mode="contained"
-        dark="true"
-        style={{
-          margin: 25,
-          paddingHorizontal: 15,
-          paddingVertical: 7,
-          backgroundColor: "#C24641",
-          borderRadius: 40,
-        }}
-        onPress={handleClick}
-      >
-        Create an account
-      </Button>
+          <Button
+            icon="account-plus"
+            mode="contained"
+            dark="true"
+            style={{
+              margin: 25,
+              paddingHorizontal: 15,
+              paddingVertical: 7,
+              backgroundColor: cherryRed,
+              borderRadius: 40,
+            }}
+            onPress={handleClick}
+          >
+            Create an account
+          </Button>
+          <Text
+            style={{ color: cherryRed }}
+            onPress={() => navigation.navigate("login")}
+          >
+            Have an account? Login
+          </Text>
+        </>
+      )}
     </View>
   );
 };

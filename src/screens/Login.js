@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import firebase from "../storage/firebase";
 import Alert from "../components/Alert";
 import { View, StyleSheet, Text } from "react-native";
@@ -6,7 +6,7 @@ import { TextInput, Button, Title } from "react-native-paper";
 import { bgColor, cherryRed } from "../default/colors";
 import AsyncStorage from "@react-native-community/async-storage";
 
-const Login = ({ setUser }) => {
+const Login = ({ navigation }) => {
   const initalState = {
     name: "",
     pwd: "",
@@ -15,8 +15,12 @@ const Login = ({ setUser }) => {
   const [form, setForm] = useState(initalState);
   const [alert, setAlert] = useState("");
 
+  useEffect(() => {
+    <Alert alert={alert} setAlert={setAlert} />;
+  }, [alert]);
+
   const handleClick = () => {
-    if (form.name === "" || form.pwd === "" || cpass === "")
+    if (form.name === "" || form.pwd === "")
       setAlert("Encountered null values");
 
     const db = firebase.database();
@@ -27,8 +31,7 @@ const Login = ({ setUser }) => {
       for (let i in data) {
         if (data[i].name === form.name && data[i].password === form.pwd) {
           storeUser();
-          setUser(form.name);
-
+          navigation.navigate("chats");
           console.log("Logged in");
           break;
         }
@@ -40,56 +43,64 @@ const Login = ({ setUser }) => {
     await AsyncStorage.setItem("user", form.name);
   };
 
-  //   if (alert !== "") {
-  //     return <Alert alert={alert} setAlert={setAlert} />;
-  //   }
   return (
     <View style={styles.container}>
-      <Title
-        style={{
-          textTransform: "capitalize",
-          marginBottom: 60,
-          fontWeight: "bold",
-        }}
-      >
-        Tell us more about you
-      </Title>
-      <TextInput
-        placeholder="User Name"
-        value={form.name}
-        mode="outlined"
-        outlineColor={cherryRed}
-        right={<TextInput.Icon name="account" />}
-        onChangeText={(text) => setForm({ ...form, name: text })}
-        style={{ marginBottom: 2 }}
-      />
-      <TextInput
-        placeholder="Password"
-        value={form.pwd}
-        secureTextEntry
-        mode="outlined"
-        outlineColor={cherryRed}
-        right={<TextInput.Icon name="lock" />}
-        onChangeText={(pass) => setForm({ ...form, pwd: pass })}
-      />
+      {alert ? (
+        <Alert alert={alert} setAlert={setAlert} />
+      ) : (
+        <>
+          <Title
+            style={{
+              textTransform: "capitalize",
+              marginBottom: 60,
+              fontWeight: "bold",
+            }}
+          >
+            Tell us more about you
+          </Title>
+          <TextInput
+            placeholder="User Name"
+            value={form.name}
+            mode="outlined"
+            outlineColor={cherryRed}
+            right={<TextInput.Icon name="account" />}
+            onChangeText={(text) => setForm({ ...form, name: text })}
+            style={{ marginBottom: 2 }}
+          />
+          <TextInput
+            placeholder="Password"
+            value={form.pwd}
+            secureTextEntry
+            mode="outlined"
+            outlineColor={cherryRed}
+            right={<TextInput.Icon name="lock" />}
+            onChangeText={(pass) => setForm({ ...form, pwd: pass })}
+          />
 
-      <Button
-        icon="import"
-        mode="contained"
-        dark="true"
-        style={{
-          margin: 25,
-          paddingHorizontal: 15,
-          paddingVertical: 7,
-          backgroundColor: "#C24641",
-          borderRadius: 40,
-        }}
-        onPress={handleClick}
-      >
-        Log me in..
-      </Button>
+          <Button
+            icon="import"
+            mode="contained"
+            dark="true"
+            style={{
+              margin: 25,
+              paddingHorizontal: 15,
+              paddingVertical: 7,
+              backgroundColor: cherryRed,
+              borderRadius: 40,
+            }}
+            onPress={handleClick}
+          >
+            Log me in..
+          </Button>
 
-      <Text style={{ color: "red" }}>No account? Create one</Text>
+          <Text
+            style={{ color: cherryRed }}
+            onPress={() => navigation.navigate("register")}
+          >
+            No account? Create one
+          </Text>
+        </>
+      )}
     </View>
   );
 };
@@ -101,6 +112,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     width: "100%",
+    height: "100%",
   },
 });
 
