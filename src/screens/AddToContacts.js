@@ -13,10 +13,10 @@ const AddToContacts = ({ navigation }) => {
   const handleClick = async () => {
     if (contactName) {
       const chatId = Date.now();
-      const user = await AsyncStorage.getItem("user");
+      const currentUser = await AsyncStorage.getItem("user");
 
       const db = firebase.database();
-      const personOne = db.ref("chats").child(user);
+      const personOne = db.ref("chats").child(currentUser);
       const personTwo = db.ref("chats").child(contactName);
 
       personOne.push({
@@ -26,7 +26,7 @@ const AddToContacts = ({ navigation }) => {
 
       personTwo.push({
         chatId: chatId,
-        contact: user,
+        contact: currentUser,
       });
       setAlert("Added Successfully!");
     } else {
