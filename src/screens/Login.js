@@ -6,7 +6,7 @@ import { TextInput, Button, Title } from "react-native-paper";
 import { bgColor, cherryRed } from "../default/colors";
 import AsyncStorage from "@react-native-community/async-storage";
 
-const Login = ({ navigation }) => {
+const Login = ({ navigation, checkUser }) => {
   const initalState = {
     name: "",
     pwd: "",
@@ -24,18 +24,19 @@ const Login = ({ navigation }) => {
       setAlert("Encountered null values");
 
     const db = firebase.database();
-    const ref = db.ref("users");
+    const ref = db.ref("users").child(form.name);
 
     ref.once("value", (snapshot) => {
-      let data = snapshot.val();
-      for (let i in data) {
-        if (data[i].name === form.name && data[i].password === form.pwd) {
+      snapshot.forEach((data) => {
+        const info = data.val();
+        // console.log(info.password + " " + form.pwd);
+
+        if (info.password === form.pwd) {
           storeUser();
-          navigation.navigate("chats");
+          checkUser();
           console.log("Logged in");
-          break;
         }
-      }
+      });
     });
   };
 
@@ -56,7 +57,7 @@ const Login = ({ navigation }) => {
               fontWeight: "bold",
             }}
           >
-            Tell us more about you
+            Sign in and connect people
           </Title>
           <TextInput
             placeholder="User Name"
