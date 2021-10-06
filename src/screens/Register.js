@@ -9,6 +9,7 @@ const Register = ({ navigation }) => {
   const initalState = {
     name: "",
     pwd: "",
+    img: "",
   };
 
   const [form, setForm] = useState(initalState);
@@ -25,10 +26,10 @@ const Register = ({ navigation }) => {
     else {
       if (form.pwd !== cpass) setAlert("Password mismatch!");
       else {
-        const db = firebase.database().ref("users");
+        const db = firebase.database().ref("users").child(form.name);
         db.push({
-          name: form.name,
           password: form.pwd,
+          img: form.img,
         });
         setForm(initalState);
         setCpass("");
@@ -82,6 +83,16 @@ const Register = ({ navigation }) => {
             mode="outlined"
             right={<TextInput.Icon name="lock-check" />}
             onChangeText={(pass) => setCpass(pass)}
+          />
+
+          <TextInput
+            // label="Password"
+            value={form.img}
+            placeholder="Profile picture"
+            mode="outlined"
+            outlineColor={cherryRed}
+            right={<TextInput.Icon name="image" />}
+            onChangeText={(url) => setForm({ ...form, img: url })}
           />
 
           <Button
