@@ -47,7 +47,7 @@ const AddToContacts = ({ navigation }) => {
           fontWeight: "bold",
         }}
       >
-        Tell us more about you
+        Expand your network
       </Title>
       <TextInput
         placeholder="Contact Name"

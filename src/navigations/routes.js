@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import Login from "../screens/Login";
 import Register from "../screens/Register";
-import { ChatList } from "../screens/ChatList";
+import ChatList from "../screens/ChatList";
+import AddToContacts from "../screens/AddToContacts";
 import { PrivateChats } from "../screens/PrivateChats";
 import { NavigationContainer } from "@react-navigation/native";
 import AsyncStorage from "@react-native-community/async-storage";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import MyTabs from "./bottom-tabs";
 
 const Routes = () => {
   const Stack = createNativeStackNavigator();
@@ -18,6 +20,7 @@ const Routes = () => {
   const checkUser = async () => {
     let res = await AsyncStorage.getItem("user");
     if (res) setUser(res);
+    else setUser("");
   };
 
   return (
@@ -25,16 +28,29 @@ const Routes = () => {
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         {user ? (
           <>
-            <Stack.Screen name="login" component={Login} />
-            <Stack.Screen name="register" component={Register} />
             <Stack.Screen
-              name="chats"
+              name="tabs"
+              component={() => <MyTabs checkUser={checkUser}  />}
+            />
+            <Stack.Screen name="addtocontacts" component={AddToContacts} />
+            <Stack.Screen name="list" component={ChatList} />
+            {/* <Stack.Screen name="register" component={Register} /> */}
+            <Stack.Screen
+              name="pc"
               component={PrivateChats}
-              options={{ headerShown: true }}
+              // options={{ headerShown: true }}
             />
           </>
         ) : (
-          <Stack.Screen name="signin" component={Login} />
+          <>
+            <Stack.Screen
+              name="login"
+              component={({ navigation }) => (
+                <Login navigation={navigation} checkUser={checkUser} />
+              )}
+            />
+            <Stack.Screen name="register" component={Register} />
+          </>
         )}
       </Stack.Navigator>
     </NavigationContainer>
