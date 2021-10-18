@@ -6,7 +6,7 @@ import { TextInput, Button, Title } from "react-native-paper";
 import { bgColor, cherryRed } from "../default/colors";
 import AsyncStorage from "@react-native-community/async-storage";
 
-const AddToContacts = ({ navigation }) => {
+const AddToContacts = () => {
   const [contactName, setContactName] = useState("");
   const [alert, setAlert] = useState("");
 
@@ -74,13 +74,6 @@ const AddToContacts = ({ navigation }) => {
       >
         Add to Chat list
       </Button>
-
-      <Text
-        style={{ color: cherryRed }}
-        onPress={() => navigation.navigate("login")}
-      >
-        Back
-      </Text>
     </View>
   );
 };
