@@ -3,6 +3,7 @@ import { GiftedChat, Bubble, Send } from "react-native-gifted-chat";
 import { bgColor, cherryRed } from "../default/colors";
 import firebase from "../storage/firebase";
 import { Text } from "react-native";
+import AsyncStorage from "@react-native-community/async-storage";
 
 const renderBubble = (props) => {
   return (
@@ -35,28 +36,29 @@ function renderSend(props) {
 export function PrivateChats({ route, navigation: { goBack } }) {
   const [messages, setMessages] = useState([]);
   const params = route.params;
+  const [cur, setCur] = useState("");
 
   useEffect(() => {
     const fetchMessages = async () => {
       const db = firebase.database();
       const ref = await db.ref("rooms").child(params.chatId).get();
+      setCur(await AsyncStorage.getItem("user"));
 
       ref.forEach((data) => {
         const info = data.val();
         setMessages((prev) => [...prev, info]);
-        // console.log(info);
       });
     };
 
     fetchMessages();
   }, []);
 
-  const onSend = useCallback((messages = []) => {
+  const pushData = async (msg) => {
     const db = firebase.database().ref("rooms").child(params.chatId);
 
     db.push({
-      _id: "me",
-      text: messages[0].text,
+      _id: await AsyncStorage.getItem("user"),
+      text: msg,
       createdAt: Date.now(),
       user: {
         _id: params.contact,
@@ -64,13 +66,17 @@ export function PrivateChats({ route, navigation: { goBack } }) {
         avatar: "https://placeimg.com/140/140/any",
       },
     });
+  };
+
+  const onSend = useCallback((messages = []) => {
+    pushData(messages[0].text);
 
     setMessages((previousMessages) =>
       GiftedChat.append(previousMessages, messages)
     );
   }, []);
 
-  console.log(messages);
+  console.log(cur);
 
   return (
     <>
@@ -81,7 +87,7 @@ export function PrivateChats({ route, navigation: { goBack } }) {
         renderSend={renderSend}
         onSend={(messages) => onSend(messages)}
         user={{
-          _id: "me",
+          _id: cur,
         }}
       />
     </>
