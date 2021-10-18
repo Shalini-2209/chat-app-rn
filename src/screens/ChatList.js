@@ -14,6 +14,7 @@ import {
 } from "../styles/MessageStyles";
 import firebase from "../storage/firebase";
 import AsyncStorage from "@react-native-community/async-storage";
+import { bgColor } from "../default/colors";
 
 const ChatList = ({ navigation }) => {
   const [chats, setChats] = useState([]);
