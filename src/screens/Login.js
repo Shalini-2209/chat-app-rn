@@ -30,7 +30,9 @@ const Login = ({ navigation, checkUser }) => {
     if (isReset) {
       if (form.pwd === "") setAlert("Missing password");
       else {
-        ref.update({ password: form.pwd });
+        ref
+          .update({ password: form.pwd })
+          .then(() => setAlert("Updated new Password!"));
         setForm(initalState);
       }
     } else {
