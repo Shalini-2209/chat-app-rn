@@ -26,8 +26,8 @@ const Register = ({ navigation }) => {
     else {
       if (form.pwd !== cpass) setAlert("Password mismatch!");
       else {
-        const db = firebase.database().ref("users").child(form.name);
-        db.push({
+        const db = firebase.database().ref(`users/${form.name}`);
+        db.set({
           password: form.pwd,
           img: form.img,
         });

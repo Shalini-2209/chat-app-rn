@@ -35,10 +35,8 @@ const ChatList = ({ navigation }) => {
       //   });
 
       chatRoomRef.once("value", (snapshot) => {
-        snapshot.forEach((data) => {
-          const info = data.val();
-          setChats((prev) => [...prev, info]);
-        });
+        const info = snapshot.val();
+        setChats((prev) => [...prev, info]);
       });
     };
     getUser();

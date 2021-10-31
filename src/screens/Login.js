@@ -14,30 +14,43 @@ const Login = ({ navigation, checkUser }) => {
 
   const [form, setForm] = useState(initalState);
   const [alert, setAlert] = useState("");
+  const [isReset, setIsReset] = useState(false);
 
   useEffect(() => {
     <Alert alert={alert} setAlert={setAlert} />;
   }, [alert]);
 
   const handleClick = () => {
-    if (form.name === "" || form.pwd === "")
+    if ((!isReset && form.name === "") || form.pwd === "")
       setAlert("Encountered null values");
 
     const db = firebase.database();
-    const ref = db.ref("users").child(form.name);
+    const ref = db.ref(`users/${form.name}`);
 
-    ref.once("value", (snapshot) => {
-      snapshot.forEach((data) => {
-        const info = data.val();
-        // console.log(info.password + " " + form.pwd);
-
+    if (isReset) {
+      if (form.pwd === "") setAlert("Missing password");
+      else {
+        ref.update({ password: form.pwd });
+        setForm(initalState);
+      }
+    } else {
+      ref.once("value").then((snapshot) => {
+        const info = snapshot.val();
+        console.log("User data: ", snapshot.val());
         if (info.password === form.pwd) {
           storeUser();
           checkUser();
           console.log("Logged in");
         }
       });
-    });
+    }
+  };
+
+  const resetPassword = () => {
+    if (!isReset && form.name === "") setAlert("Fill user name");
+    else {
+      setIsReset(!isReset);
+    }
   };
 
   const storeUser = async () => {
@@ -57,19 +70,23 @@ const Login = ({ navigation, checkUser }) => {
               fontWeight: "bold",
             }}
           >
-            Sign in and connect people
+            {isReset ? "Reset New Password" : "Sign in and connect people"}
           </Title>
+
+          {!isReset && (
+            <TextInput
+              placeholder="User Name"
+              value={form.name}
+              mode="outlined"
+              outlineColor={cherryRed}
+              right={<TextInput.Icon name="account" />}
+              onChangeText={(text) => setForm({ ...form, name: text })}
+              style={{ marginBottom: 2 }}
+            />
+          )}
+
           <TextInput
-            placeholder="User Name"
-            value={form.name}
-            mode="outlined"
-            outlineColor={cherryRed}
-            right={<TextInput.Icon name="account" />}
-            onChangeText={(text) => setForm({ ...form, name: text })}
-            style={{ marginBottom: 2 }}
-          />
-          <TextInput
-            placeholder="Password"
+            placeholder={isReset ? "New Password" : "Password"}
             value={form.pwd}
             secureTextEntry
             mode="outlined"
@@ -91,14 +108,27 @@ const Login = ({ navigation, checkUser }) => {
             }}
             onPress={handleClick}
           >
-            Log me in..
+            {isReset ? "Update Password" : " Log me in.."}
           </Button>
 
+          {!isReset && (
+            <Text
+              style={{ color: cherryRed }}
+              onPress={() => navigation.navigate("register")}
+            >
+              No account? Create one
+            </Text>
+          )}
+
           <Text
-            style={{ color: cherryRed }}
-            onPress={() => navigation.navigate("register")}
+            style={{
+              color: cherryRed,
+              marginTop: 10,
+              textDecorationLine: "underline",
+            }}
+            onPress={resetPassword}
           >
-            No account? Create one
+            {isReset ? "Back to Login" : "Forgot Password?"}
           </Text>
         </>
       )}

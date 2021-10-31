@@ -19,12 +19,12 @@ const AddToContacts = () => {
       const personOne = db.ref("chats").child(currentUser);
       const personTwo = db.ref("chats").child(contactName);
 
-      personOne.push({
+      personOne.set({
         chatId: chatId,
         contact: contactName,
       });
 
-      personTwo.push({
+      personTwo.set({
         chatId: chatId,
         contact: currentUser,
       });
