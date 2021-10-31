@@ -40,10 +40,15 @@ export function PrivateChats({ route }) {
       const db = firebase.database();
       const ref = await db.ref("rooms").child(params.chatId).get();
 
+      // ref.once("value").then((snapshot) => {
+      //   console.log(snapshot.val());
+      //   setMessages((prev) => [...prev, snapshot.val()]);
+      // });
+
       ref.forEach((data) => {
         const info = data.val();
         console.log(info);
-        setMessages((prev) => [...prev, info]);
+        setMessages((prev) => [...prev, data.val()]);
       });
     };
 
@@ -51,8 +56,8 @@ export function PrivateChats({ route }) {
   }, []);
 
   const pushData = async (msg) => {
-    const db = firebase.database().ref("rooms").child(params.chatId);
-    db.push(msg);
+    const db = firebase.database().ref(`rooms/${params.chatId}/${msg._id}`);
+    db.set(msg);
 
     // db.push({
     //   _id: await AsyncStorage.getItem("user"),
