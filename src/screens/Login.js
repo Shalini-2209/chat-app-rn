@@ -37,12 +37,16 @@ const Login = ({ navigation, checkUser }) => {
       }
     } else {
       ref.once("value").then((snapshot) => {
-        const info = snapshot.val();
-        console.log("User data: ", snapshot.val());
-        if (info.password === form.pwd) {
-          storeUser();
-          checkUser();
-          console.log("Logged in");
+        if (snapshot.exists()) {
+          const info = snapshot.val();
+          // console.log("User data: ", snapshot.val());
+          if (info.password === form.pwd) {
+            storeUser();
+            checkUser();
+            console.log("Logged in");
+          }
+        } else {
+          throw new Error("Not found: ");
         }
       });
     }
