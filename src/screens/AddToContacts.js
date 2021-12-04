@@ -16,16 +16,16 @@ const AddToContacts = () => {
       const currentUser = await AsyncStorage.getItem("user");
 
       const db = firebase.database();
-      const personOne = db.ref("chats").child(currentUser);
-      const personTwo = db.ref("chats").child(contactName);
+      const personOne = db.ref("chats").child(currentUser).child(chatId);
+      const personTwo = db.ref("chats").child(contactName).child(chatId);
 
       personOne.set({
-        chatId: chatId,
+        // chatId: chatId,
         contact: contactName,
       });
 
       personTwo.set({
-        chatId: chatId,
+        // chatId: chatId,
         contact: currentUser,
       });
       setAlert("Added Successfully!");
