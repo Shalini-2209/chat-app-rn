@@ -2,8 +2,8 @@ import styled from "styled-components/native";
 
 export const Container = styled.View`
   flex: 1;
-  padding-left: 20px;
-  padding-right: 20px;
+  /* padding-left: 20px;
+  padding-right: 20px; */
   align-items: center;
   background-color: #ffffff;
 `;
@@ -14,7 +14,7 @@ export const Card = styled.TouchableOpacity`
 
 export const UserInfo = styled.View`
   flex-direction: row;
-  justify-content: space-between;
+  /* justify-content: space-between; */
 `;
 
 export const UserImgWrapper = styled.View`
