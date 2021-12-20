@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import firebase from "../storage/firebase";
 import Alert from "../components/Alert";
-import { View, StyleSheet, Text } from "react-native";
+import { View, StyleSheet } from "react-native";
 import { TextInput, Button, Title } from "react-native-paper";
 import { bgColor, cherryRed } from "../default/colors";
 import AsyncStorage from "@react-native-community/async-storage";
@@ -11,24 +11,39 @@ const AddToContacts = () => {
   const [alert, setAlert] = useState("");
 
   const handleClick = async () => {
+    const db = firebase.database();
+    const currentUser = await AsyncStorage.getItem("user");
+
     if (contactName) {
-      const chatId = Date.now();
-      const currentUser = await AsyncStorage.getItem("user");
+      db.ref("users")
+        .child(contactName)
+        .get()
+        .then((snapshot) => {
+          if (snapshot.exists()) {
+            const chatId = Date.now();
 
-      const db = firebase.database();
-      const personOne = db.ref("chats").child(currentUser).child(chatId);
-      const personTwo = db.ref("chats").child(contactName).child(chatId);
+            const personOne = db.ref("chats").child(currentUser).child(chatId);
+            const personTwo = db.ref("chats").child(contactName).child(chatId);
 
-      personOne.set({
-        // chatId: chatId,
-        contact: contactName,
-      });
+            personOne.set({
+              // chatId: chatId,
+              contact: contactName,
+            });
 
-      personTwo.set({
-        // chatId: chatId,
-        contact: currentUser,
-      });
-      setAlert("Added Successfully!");
+            personTwo
+              .set({
+                // chatId: chatId,
+                contact: currentUser,
+              })
+              .then(() => setContactName(""));
+            setAlert("Added Successfully!");
+          } else {
+            setAlert("No such user found!");
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+        });
     } else {
       setAlert("Enter a contact name!");
     }

@@ -29,7 +29,7 @@ const Register = ({ navigation }) => {
         const db = firebase.database().ref(`users/${form.name}`);
         db.set({
           password: form.pwd,
-          img: form.img,
+          // img: form.img,
         });
         setForm(initalState);
         setCpass("");
@@ -85,7 +85,7 @@ const Register = ({ navigation }) => {
             onChangeText={(pass) => setCpass(pass)}
           />
 
-          <TextInput
+          {/* <TextInput
             // label="Password"
             value={form.img}
             placeholder="Profile picture"
@@ -93,7 +93,7 @@ const Register = ({ navigation }) => {
             outlineColor={cherryRed}
             right={<TextInput.Icon name="image" />}
             onChangeText={(url) => setForm({ ...form, img: url })}
-          />
+          /> */}
 
           <Button
             icon="account-plus"

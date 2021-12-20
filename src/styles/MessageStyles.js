@@ -1,11 +1,11 @@
 import styled from "styled-components/native";
-
+import { bgColor } from "../default/colors";
 export const Container = styled.View`
   flex: 1;
   /* padding-left: 20px;
   padding-right: 20px; */
   align-items: center;
-  background-color: #ffffff;
+  background-color: ${bgColor};
 `;
 
 export const Card = styled.TouchableOpacity`

@@ -30,7 +30,7 @@ const ChatList = ({ navigation }) => {
       const db = firebase.database();
       const chatRoomRef = db.ref("chats").child(currentUser);
 
-      chatRoomRef.once("value", (snapshot) => {
+      chatRoomRef.on("value", (snapshot) => {
         if (snapshot.exists()) {
           const info = snapshot.val();
           // console.log(Object.keys(info));
@@ -45,37 +45,31 @@ const ChatList = ({ navigation }) => {
 
   return (
     <Container>
-      <ImageBackground
-        source={image}
-        resizeMode="cover"
-        style={{ flex: 1, width: "100%" }}
-      >
-        {chats &&
-          Object.keys(chats).map((key) => (
-            <Card
-              onPress={() =>
-                navigation.navigate("pc", {
-                  contact: chats[key].contact,
-                  chatId: key,
-                })
-              }
-              key={key}
-            >
-              <UserInfo>
-                <UserImgWrapper>
-                  <UserImg source="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSe2kLngE-uGnLMgRQ_lHMXugatZacKczr7ag&usqp=CAUs" />
-                </UserImgWrapper>
-                <TextSection>
-                  <UserInfoText>
-                    <UserName>{chats[key].contact}</UserName>
-                    {/* <MessageTime>{item.messageTime}</MessageTime> */}
-                  </UserInfoText>
-                  {/* <MessageText>{item.messageText}</MessageText> */}
-                </TextSection>
-              </UserInfo>
-            </Card>
-          ))}
-      </ImageBackground>
+      {chats &&
+        Object.keys(chats).map((key) => (
+          <Card
+            onPress={() =>
+              navigation.navigate("pc", {
+                contact: chats[key].contact,
+                chatId: key,
+              })
+            }
+            key={key}
+          >
+            <UserInfo>
+              <UserImgWrapper>
+                <UserImg source="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSe2kLngE-uGnLMgRQ_lHMXugatZacKczr7ag&usqp=CAUs" />
+              </UserImgWrapper>
+              <TextSection>
+                <UserInfoText>
+                  <UserName>{chats[key].contact}</UserName>
+                  {/* <MessageTime>{item.messageTime}</MessageTime> */}
+                </UserInfoText>
+                {/* <MessageText>{item.messageText}</MessageText> */}
+              </TextSection>
+            </UserInfo>
+          </Card>
+        ))}
     </Container>
   );
 };
